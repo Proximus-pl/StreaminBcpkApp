@@ -7,29 +7,31 @@ import { isLiquidGlassAvailable } from 'expo-glass-effect';
 import { Tabs } from 'expo-router';
 import { Icon, Label, NativeTabs } from 'expo-router/unstable-native-tabs';
 import { SymbolView } from 'expo-symbols';
+import { useLanguage } from '@/hooks/useLanguage';
 
 // IMPORTANT: iOS 26 uses NativeTabs for native tabs with liquid glass support.
 // NativeTabs intentionally does NOT use custom design tokens — liquid glass
 // is a system-level appearance provided by iOS and cannot be overridden.
 // Custom brand colors are applied only on the ClassicTabLayout path (older iOS / Android / web).
 function NativeTabLayout() {
+  const { t } = useLanguage();
   return (
     <NativeTabs>
       <NativeTabs.Trigger name="index">
         <Icon sf={{ default: 'house', selected: 'house.fill' }} />
-        <Label>Home</Label>
+        <Label>{t('goodMorning').split(',')[0]}</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="controls">
         <Icon sf={{ default: 'slider.horizontal.3', selected: 'slider.horizontal.3' }} />
-        <Label>Controls</Label>
+        <Label>{t('bagControls')}</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="activity">
         <Icon sf={{ default: 'clock', selected: 'clock.fill' }} />
-        <Label>Activity</Label>
+        <Label>{t('activity')}</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="settings">
         <Icon sf={{ default: 'gearshape', selected: 'gearshape.fill' }} />
-        <Label>Settings</Label>
+        <Label>{t('settings')}</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
@@ -37,6 +39,7 @@ function NativeTabLayout() {
 
 function ClassicTabLayout() {
   const colors = useColors();
+  const { t } = useLanguage();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const isIOS = Platform.OS === 'ios';
@@ -76,7 +79,7 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: t('goodMorning').split(',')[0],
           tabBarIcon: ({ color }) =>
             isIOS ? (
               <SymbolView name="house" tintColor={color} size={24} />
@@ -88,7 +91,7 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="controls"
         options={{
-          title: 'Controls',
+          title: t('bagControls'),
           tabBarIcon: ({ color }) =>
             isIOS ? (
               <SymbolView name="slider.horizontal.3" tintColor={color} size={24} />
@@ -100,7 +103,7 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="activity"
         options={{
-          title: 'Activity',
+          title: t('activity'),
           tabBarIcon: ({ color }) =>
             isIOS ? (
               <SymbolView name="clock" tintColor={color} size={24} />
@@ -112,7 +115,7 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
+          title: t('settings'),
           tabBarIcon: ({ color }) =>
             isIOS ? (
               <SymbolView name="gearshape" tintColor={color} size={24} />

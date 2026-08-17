@@ -7,9 +7,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Card } from '@/components/Controls';
 import { useBag } from '@/context/BagContext';
 import { useColors } from '@/hooks/useColors';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export default function LoginScreen() {
   const colors = useColors();
+  const { t } = useLanguage();
   const insets = useSafeAreaInsets();
   const { connectObs } = useBag();
   const [email, setEmail] = useState('');
@@ -17,7 +19,7 @@ export default function LoginScreen() {
   const [error, setError] = useState('');
   const submit = () => {
     if (!email.trim() || !password.trim()) {
-      setError('Enter your operator email and password to continue.');
+      setError(t('loginValidation'));
       return;
     }
     connectObs();
@@ -25,10 +27,10 @@ export default function LoginScreen() {
   };
   return (
     <View style={[styles.root, { backgroundColor: colors.background, paddingTop: insets.top }]}>
-      <View style={styles.nav}><Pressable testID="close-login" accessibilityRole="button" accessibilityLabel="Close login" onPress={() => router.back()}><Feather name="arrow-left" size={21} color={colors.foreground} /></Pressable><Text style={[styles.navTitle, { color: colors.foreground }]}>Account access</Text><View style={{ width: 21 }} /></View>
+      <View style={styles.nav}><Pressable testID="close-login" accessibilityRole="button" accessibilityLabel={t('accountAccess')} onPress={() => router.back()}><Feather name="arrow-left" size={21} color={colors.foreground} /></Pressable><Text style={[styles.navTitle, { color: colors.foreground }]}>{t('accountAccess')}</Text><View style={{ width: 21 }} /></View>
       <View style={styles.content}>
-        <LinearGradient colors={[colors.deep, colors.card]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.brandBlock}><View style={[styles.brandMark, { backgroundColor: colors.primary }]}><Ionicons name="radio" size={25} color={colors.primaryForeground} /></View><Text style={[styles.brandKicker, { color: colors.primary }]}>STREAMING BAG</Text><Text style={[styles.brandTitle, { color: colors.deepForeground }]}>Bring your studio with you.</Text><Text style={[styles.brandDetail, { color: colors.mutedForeground }]}>Sign in to connect this console to OBS Studio and manage your field rig.</Text></LinearGradient>
-        <View style={styles.form}><Text style={[styles.formTitle, { color: colors.foreground }]}>Operator login</Text><Text style={[styles.formDetail, { color: colors.mutedForeground }]}>Use the account linked to your OBS workspace.</Text><TextInput testID="login-email" accessibilityLabel="Email address" autoCapitalize="none" keyboardType="email-address" placeholder="Email address" placeholderTextColor={colors.mutedForeground} value={email} onChangeText={setEmail} style={[styles.input, { borderColor: colors.border, backgroundColor: colors.card, color: colors.foreground }]} /><TextInput testID="login-password" accessibilityLabel="Password" secureTextEntry placeholder="Password" placeholderTextColor={colors.mutedForeground} value={password} onChangeText={setPassword} style={[styles.input, { borderColor: colors.border, backgroundColor: colors.card, color: colors.foreground }]} />{error ? <Text style={[styles.error, { color: colors.destructive }]}>{error}</Text> : null}<Pressable testID="login-submit" accessibilityRole="button" accessibilityLabel="Continue to OBS Studio" onPress={submit} style={({ pressed }) => [styles.submit, { backgroundColor: colors.primary }, pressed && styles.pressed]}><Text style={[styles.submitText, { color: colors.primaryForeground }]}>Continue to OBS Studio</Text><Feather name="arrow-right" size={18} color={colors.primaryForeground} /></Pressable><Text style={[styles.privacy, { color: colors.mutedForeground }]}>Your connection details stay on this device.</Text></View>
+        <LinearGradient colors={[colors.deep, colors.card]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.brandBlock}><View style={[styles.brandMark, { backgroundColor: colors.primary }]}><Ionicons name="radio" size={25} color={colors.primaryForeground} /></View><Text style={[styles.brandKicker, { color: colors.primary }]}>{t('streamingBag')}</Text><Text style={[styles.brandTitle, { color: colors.deepForeground }]}>{t('goodMorning')}</Text><Text style={[styles.brandDetail, { color: colors.mutedForeground }]}>{t('accountLinked')}</Text></LinearGradient>
+        <View style={styles.form}><Text style={[styles.formTitle, { color: colors.foreground }]}>{t('operatorLogin')}</Text><Text style={[styles.formDetail, { color: colors.mutedForeground }]}>{t('accountLinked')}</Text><TextInput testID="login-email" accessibilityLabel={t('emailAddress')} autoCapitalize="none" keyboardType="email-address" placeholder={t('emailAddress')} placeholderTextColor={colors.mutedForeground} value={email} onChangeText={setEmail} style={[styles.input, { borderColor: colors.border, backgroundColor: colors.card, color: colors.foreground }]} /><TextInput testID="login-password" accessibilityLabel={t('password')} secureTextEntry placeholder={t('password')} placeholderTextColor={colors.mutedForeground} value={password} onChangeText={setPassword} style={[styles.input, { borderColor: colors.border, backgroundColor: colors.card, color: colors.foreground }]} />{error ? <Text style={[styles.error, { color: colors.destructive }]}>{error}</Text> : null}<Pressable testID="login-submit" accessibilityRole="button" accessibilityLabel={t('continueObs')} onPress={submit} style={({ pressed }) => [styles.submit, { backgroundColor: colors.primary }, pressed && styles.pressed]}><Text style={[styles.submitText, { color: colors.primaryForeground }]}>{t('continueObs')}</Text><Feather name="arrow-right" size={18} color={colors.primaryForeground} /></Pressable><Text style={[styles.privacy, { color: colors.mutedForeground }]}>{t('privacy')}</Text></View>
       </View>
     </View>
   );

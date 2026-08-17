@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Card, Eyebrow, StatusPill } from '@/components/Controls';
 import { useBag, type ActivityItem } from '@/context/BagContext';
 import { useColors } from '@/hooks/useColors';
+import { useLanguage } from '@/hooks/useLanguage';
 
 function ActivityIcon({ kind, color }: { kind: ActivityItem['kind']; color: string }) {
   if (kind === 'recording') return <Ionicons name="radio-outline" size={19} color={color} />;
@@ -16,6 +17,7 @@ function ActivityIcon({ kind, color }: { kind: ActivityItem['kind']; color: stri
 
 export default function ActivityScreen() {
   const colors = useColors();
+  const { t } = useLanguage();
   const insets = useSafeAreaInsets();
   const { activity, isRecording, recordingSeconds } = useBag();
   return (
@@ -26,8 +28,8 @@ export default function ActivityScreen() {
         scrollEnabled={activity.length > 0}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[styles.content, { paddingTop: insets.top + 18, paddingBottom: 110 }]}
-        ListHeaderComponent={<><View style={styles.header}><View><Text style={[styles.kicker, { color: colors.primary }]}>TIMELINE / 03</Text><Text style={[styles.title, { color: colors.foreground }]}>Activity</Text></View><StatusPill label={isRecording ? `${recordingSeconds}s LIVE` : 'IDLE'} active={isRecording} /></View><Card style={styles.summary}><View><Eyebrow>SESSION STATUS</Eyebrow><Text style={[styles.summaryTitle, { color: colors.foreground }]}>{isRecording ? 'Capturing your stream' : 'Ready for your next take'}</Text><Text style={[styles.summaryDetail, { color: colors.mutedForeground }]}>Every control action appears here</Text></View><View style={[styles.summaryMark, { backgroundColor: isRecording ? colors.destructive : colors.primary }]}><Feather name={isRecording ? 'radio' : 'check'} size={20} color={isRecording ? colors.destructiveForeground : colors.primaryForeground} /></View></Card><Text style={[styles.sectionTitle, { color: colors.foreground }]}>Recent activity</Text></>}
-        ListEmptyComponent={<Card><Text style={[styles.emptyTitle, { color: colors.foreground }]}>No activity yet</Text><Text style={[styles.emptyText, { color: colors.mutedForeground }]}>Your bag events will appear here.</Text></Card>}
+        ListHeaderComponent={<><View style={styles.header}><View><Text style={[styles.kicker, { color: colors.primary }]}>{t('timeline')}</Text><Text style={[styles.title, { color: colors.foreground }]}>{t('activity')}</Text></View><StatusPill label={isRecording ? `${recordingSeconds}s ${t('live')}` : t('idle')} active={isRecording} /></View><Card style={styles.summary}><View><Eyebrow>{t('sessionStatus')}</Eyebrow><Text style={[styles.summaryTitle, { color: colors.foreground }]}>{isRecording ? t('capturingStream') : t('readyNextTake')}</Text><Text style={[styles.summaryDetail, { color: colors.mutedForeground }]}>{t('everyControl')}</Text></View><View style={[styles.summaryMark, { backgroundColor: isRecording ? colors.destructive : colors.primary }]}><Feather name={isRecording ? 'radio' : 'check'} size={20} color={isRecording ? colors.destructiveForeground : colors.primaryForeground} /></View></Card><Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t('recentActivity')}</Text></>}
+        ListEmptyComponent={<Card><Text style={[styles.emptyTitle, { color: colors.foreground }]}>{t('noActivity')}</Text><Text style={[styles.emptyText, { color: colors.mutedForeground }]}>{t('noActivityBody')}</Text></Card>}
         renderItem={({ item }) => <View style={styles.item}><View style={[styles.itemIcon, { backgroundColor: colors.secondary }]}><ActivityIcon kind={item.kind} color={colors.foreground} /></View><View style={styles.itemCopy}><Text style={[styles.itemTitle, { color: colors.foreground }]}>{item.title}</Text><Text style={[styles.itemDetail, { color: colors.mutedForeground }]}>{item.detail}</Text></View><Text style={[styles.itemTime, { color: colors.mutedForeground }]}>{item.time}</Text></View>}
       />
     </View>

@@ -7,11 +7,13 @@ import { Card, Divider, HardwareIcon, StatusPill } from '@/components/Controls';
 import { useBag } from '@/context/BagContext';
 import { useColors } from '@/hooks/useColors';
 import { useTheme, type ThemeMode } from '@/hooks/useTheme';
+import { languageOptions, useLanguage } from '@/hooks/useLanguage';
 
 export default function SettingsScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const { mode, setMode } = useTheme();
+  const { language, setLanguage, t } = useLanguage();
   const { obsConnected, connectObs, disconnectObs } = useBag();
   const themeOptions: { key: ThemeMode; label: string; icon: keyof typeof Feather.glyphMap }[] = [
     { key: 'system', label: 'System', icon: 'smartphone' },
@@ -21,15 +23,16 @@ export default function SettingsScreen() {
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 18, paddingBottom: 110 }]} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}><View><Text style={[styles.kicker, { color: colors.primary }]}>PREFERENCES / 04</Text><Text style={[styles.title, { color: colors.foreground }]}>Settings</Text></View><View style={[styles.avatar, { backgroundColor: colors.primary }]}><Text style={[styles.avatarText, { color: colors.primaryForeground }]}>A</Text></View></View>
+        <View style={styles.header}><View><Text style={[styles.kicker, { color: colors.primary }]}>{t('preferences')}</Text><Text style={[styles.title, { color: colors.foreground }]}>{t('settings')}</Text></View><View style={[styles.avatar, { backgroundColor: colors.primary }]}><Text style={[styles.avatarText, { color: colors.primaryForeground }]}>A</Text></View></View>
         <Card style={styles.profile}><View style={[styles.profileAvatar, { backgroundColor: colors.deep }]}><Text style={[styles.profileInitial, { color: colors.primary }]}>A</Text></View><View style={styles.profileCopy}><Text style={[styles.profileName, { color: colors.foreground }]}>Alex Morgan</Text><Text style={[styles.profileEmail, { color: colors.mutedForeground }]}>field operator · SB-2048</Text></View><Feather name="edit-3" size={17} color={colors.mutedForeground} /></Card>
-        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Appearance</Text>
-        <Card style={styles.themeCard}><Text style={[styles.cardLabel, { color: colors.mutedForeground }]}>APP THEME</Text><View style={styles.themeOptions}>{themeOptions.map((option) => <Pressable key={option.key} testID={`theme-${option.key}`} accessibilityRole="button" accessibilityLabel={`Use ${option.label} theme`} onPress={() => setMode(option.key)} style={({ pressed }) => [styles.themeOption, { backgroundColor: mode === option.key ? colors.accent : colors.secondary, borderColor: mode === option.key ? colors.primary : 'transparent' }, pressed && styles.pressed]}><Feather name={option.icon} size={17} color={mode === option.key ? colors.accentForeground : colors.mutedForeground} /><Text style={[styles.themeLabel, { color: mode === option.key ? colors.accentForeground : colors.mutedForeground }]}>{option.label}</Text>{mode === option.key && <View style={[styles.selectedDot, { backgroundColor: colors.primary }]} />}</Pressable>)}</View></Card>
-        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>Connections</Text>
-        <Card style={styles.connectionCard}><View style={styles.connectionTop}><View style={[styles.connectionIcon, { backgroundColor: colors.accent }]}><HardwareIcon kind="obs" color={colors.accentForeground} /></View><View style={styles.connectionCopy}><Text style={[styles.connectionTitle, { color: colors.foreground }]}>OBS Studio</Text><Text style={[styles.connectionDetail, { color: colors.mutedForeground }]}>{obsConnected ? 'Connected to local instance' : 'Not connected'}</Text></View><StatusPill label={obsConnected ? 'CONNECTED' : 'OFFLINE'} active={obsConnected} warning={!obsConnected} /></View><Divider /><Pressable testID="obs-connection" accessibilityRole="button" accessibilityLabel={obsConnected ? 'Disconnect OBS Studio' : 'Connect OBS Studio'} onPress={obsConnected ? disconnectObs : connectObs} style={({ pressed }) => [styles.connectionAction, { backgroundColor: colors.secondary }, pressed && styles.pressed]}><Ionicons name={obsConnected ? 'link-outline' : 'add-circle-outline'} size={17} color={colors.foreground} /><Text style={[styles.connectionActionText, { color: colors.foreground }]}>{obsConnected ? 'Disconnect instance' : 'Connect OBS Studio'}</Text><Feather name="arrow-up-right" size={16} color={colors.foreground} /></Pressable></Card>
-        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>About</Text>
-        <Card style={styles.about}><View><Text style={[styles.aboutTitle, { color: colors.foreground }]}>Streaming Bag Control</Text><Text style={[styles.aboutDetail, { color: colors.mutedForeground }]}>Mobile console · Version 0.1.0</Text></View><Feather name="info" size={18} color={colors.mutedForeground} /></Card>
-        <Pressable onPress={() => router.push('/login')} style={({ pressed }) => [styles.loginLink, pressed && styles.pressed]}><Text style={[styles.loginText, { color: colors.foreground }]}>Manage account access</Text><Feather name="arrow-right" size={16} color={colors.foreground} /></Pressable>
+        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t('appearance')}</Text>
+        <Card style={styles.themeCard}><Text style={[styles.cardLabel, { color: colors.mutedForeground }]}>{t('appTheme')}</Text><View style={styles.themeOptions}>{themeOptions.map((option) => <Pressable key={option.key} testID={`theme-${option.key}`} accessibilityRole="button" accessibilityLabel={`Use ${option.label} theme`} onPress={() => setMode(option.key)} style={({ pressed }) => [styles.themeOption, { backgroundColor: mode === option.key ? colors.accent : colors.secondary, borderColor: mode === option.key ? colors.primary : 'transparent' }, pressed && styles.pressed]}><Feather name={option.icon} size={17} color={mode === option.key ? colors.accentForeground : colors.mutedForeground} /><Text style={[styles.themeLabel, { color: mode === option.key ? colors.accentForeground : colors.mutedForeground }]}>{t(option.key)}</Text>{mode === option.key && <View style={[styles.selectedDot, { backgroundColor: colors.primary }]} />}</Pressable>)}</View></Card>
+        <Card style={styles.languageCard}><View><Text style={[styles.cardLabel, { color: colors.mutedForeground }]}>{t('language').toUpperCase()}</Text><Text style={[styles.languageDescription, { color: colors.foreground }]}>{t('chooseLanguage')}</Text></View><View style={styles.languageOptions}>{languageOptions.map((option) => <Pressable key={option.code} testID={`language-${option.code}`} accessibilityRole="button" accessibilityLabel={`Use ${option.label}`} onPress={() => setLanguage(option.code)} style={({ pressed }) => [styles.languageOption, { backgroundColor: language === option.code ? colors.accent : colors.secondary, borderColor: language === option.code ? colors.primary : 'transparent' }, pressed && styles.pressed]}><Text style={[styles.languageLabel, { color: language === option.code ? colors.accentForeground : colors.mutedForeground }]}>{option.nativeLabel}</Text>{language === option.code && <View style={[styles.selectedDot, { backgroundColor: colors.primary }]} />}</Pressable>)}</View></Card>
+        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t('connections')}</Text>
+        <Card style={styles.connectionCard}><View style={styles.connectionTop}><View style={[styles.connectionIcon, { backgroundColor: colors.accent }]}><HardwareIcon kind="obs" color={colors.accentForeground} /></View><View style={styles.connectionCopy}><Text style={[styles.connectionTitle, { color: colors.foreground }]}>{t('obsStudio')}</Text><Text style={[styles.connectionDetail, { color: colors.mutedForeground }]}>{obsConnected ? t('connectedLocal') : t('notConnected')}</Text></View><StatusPill label={obsConnected ? t('connected') : t('offline')} active={obsConnected} warning={!obsConnected} /></View><Divider /><Pressable testID="obs-connection" accessibilityRole="button" accessibilityLabel={obsConnected ? t('disconnectInstance') : t('connectObs')} onPress={obsConnected ? disconnectObs : connectObs} style={({ pressed }) => [styles.connectionAction, { backgroundColor: colors.secondary }, pressed && styles.pressed]}><Ionicons name={obsConnected ? 'link-outline' : 'add-circle-outline'} size={17} color={colors.foreground} /><Text style={[styles.connectionActionText, { color: colors.foreground }]}>{obsConnected ? t('disconnectInstance') : t('connectObs')}</Text><Feather name="arrow-up-right" size={16} color={colors.foreground} /></Pressable></Card>
+        <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t('about')}</Text>
+        <Card style={styles.about}><View><Text style={[styles.aboutTitle, { color: colors.foreground }]}>Streaming Bag Control</Text><Text style={[styles.aboutDetail, { color: colors.mutedForeground }]}>{t('appVersion')}</Text></View><Feather name="info" size={18} color={colors.mutedForeground} /></Card>
+        <Pressable onPress={() => router.push('/login')} style={({ pressed }) => [styles.loginLink, pressed && styles.pressed]}><Text style={[styles.loginText, { color: colors.foreground }]}>{t('manageAccount')}</Text><Feather name="arrow-right" size={16} color={colors.foreground} /></Pressable>
       </ScrollView>
     </View>
   );
@@ -51,11 +54,16 @@ const styles = StyleSheet.create({
   profileEmail: { fontSize: 12 },
   sectionTitle: { fontFamily: 'Inter_600SemiBold', fontSize: 17, marginTop: 6 },
   themeCard: { gap: 12 },
+  languageCard: { gap: 12 },
   cardLabel: { fontSize: 10, fontWeight: '700', letterSpacing: 1.1 },
+  languageDescription: { fontFamily: 'Inter_600SemiBold', fontSize: 14, marginTop: 7 },
   themeOptions: { flexDirection: 'row', gap: 8 },
   themeOption: { alignItems: 'center', borderRadius: 13, borderWidth: 1.5, flex: 1, gap: 7, paddingVertical: 12 },
   themeLabel: { fontSize: 11, fontWeight: '700' },
   selectedDot: { borderRadius: 3, height: 5, width: 5 },
+  languageOptions: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  languageOption: { alignItems: 'center', borderRadius: 12, borderWidth: 1.5, flexBasis: '47%', flexGrow: 1, gap: 6, paddingVertical: 11 },
+  languageLabel: { fontSize: 12, fontWeight: '700' },
   connectionCard: { gap: 13 },
   connectionTop: { alignItems: 'center', flexDirection: 'row', gap: 12 },
   connectionIcon: { alignItems: 'center', borderRadius: 14, height: 42, justifyContent: 'center', width: 42 },

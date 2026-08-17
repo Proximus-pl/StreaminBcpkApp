@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Card, HardwareIcon, IconSquare, StatusPill } from '@/components/Controls';
 import { useBag } from '@/context/BagContext';
 import { useColors } from '@/hooks/useColors';
+import { useLanguage } from '@/hooks/useLanguage';
 
 function formatDuration(seconds: number) {
   const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -16,6 +17,7 @@ function formatDuration(seconds: number) {
 
 export default function HomeScreen() {
   const colors = useColors();
+  const { t } = useLanguage();
   const insets = useSafeAreaInsets();
   const {
     isRecording,
@@ -41,10 +43,10 @@ export default function HomeScreen() {
         <View style={styles.topbar}>
           <View>
             <Text style={[styles.kicker, { color: colors.primary }]}>
-              FIELD CONTROL / 01
+              {t('fieldControl')}
             </Text>
             <Text style={[styles.title, { color: colors.foreground }]}>
-              Good morning, Alex
+              {t('goodMorning')}
             </Text>
           </View>
           <IconSquare
@@ -63,14 +65,14 @@ export default function HomeScreen() {
           <View style={styles.heroHeader}>
             <View>
               <Text style={[styles.heroLabel, { color: colors.primary }]}>
-                STREAMING BAG
+                {t('streamingBag')}
               </Text>
               <Text style={[styles.heroName, { color: colors.deepForeground }]}>
-                Unit SB-2048
+                {t('unit')}
               </Text>
             </View>
             <StatusPill
-              label={obsConnected ? 'OBS LINKED' : 'LOCAL MODE'}
+              label={obsConnected ? t('obsLinked') : t('localMode')}
               active={obsConnected}
               warning={!obsConnected}
             />
@@ -81,7 +83,7 @@ export default function HomeScreen() {
                 {isRecording ? formatDuration(recordingSeconds) : '00:00'}
               </Text>
               <Text style={[styles.timerCaption, { color: colors.mutedForeground }]}>
-                {isRecording ? 'Recording live' : 'Ready to record'}
+                {isRecording ? t('recordingLive') : t('readyToRecord')}
               </Text>
             </View>
             <Pressable
@@ -122,22 +124,22 @@ export default function HomeScreen() {
                 ]}
               />
               <Text style={[styles.heroMeta, { color: colors.mutedForeground }]}>
-                {isRecording ? 'LIVE CAPTURE' : 'CAPTURE STANDBY'}
+                {isRecording ? t('liveCapture') : t('captureStandby')}
               </Text>
             </View>
             <Text style={[styles.heroMeta, { color: colors.mutedForeground }]}>
-              4K / 30 FPS
+              {t('k4')}
             </Text>
           </View>
         </LinearGradient>
 
         <View style={styles.sectionHead}>
           <Text style={[styles.sectionTitle, { color: colors.foreground }]}>
-            At a glance
+            {t('glance')}
           </Text>
           <Pressable onPress={() => router.push('/controls')}>
             <Text style={[styles.link, { color: colors.foreground }]}>
-              All controls <Feather name="arrow-up-right" size={13} color={colors.foreground} />
+              {t('allControls')} <Feather name="arrow-up-right" size={13} color={colors.foreground} />
             </Text>
           </Pressable>
         </View>
@@ -145,10 +147,10 @@ export default function HomeScreen() {
           <Card style={styles.metricCard}>
             <HardwareIcon kind="camera" color={colors.primary} />
             <Text style={[styles.metricValue, { color: colors.foreground }]}>
-              {cameraOn ? 'ON' : 'OFF'}
+              {cameraOn ? t('on') : t('off')}
             </Text>
             <Text style={[styles.metricLabel, { color: colors.mutedForeground }]}>
-              {cameraView} camera
+              {cameraView === 'Wide' ? t('wideCamera') : cameraView === 'Front' ? t('frontCamera') : t('rearCamera')}
             </Text>
           </Card>
           <Card style={styles.metricCard}>
@@ -157,25 +159,25 @@ export default function HomeScreen() {
               {actuatorPosition}%
             </Text>
             <Text style={[styles.metricLabel, { color: colors.mutedForeground }]}>
-              Actuator position
+              {t('actuatorPosition')}
             </Text>
           </Card>
           <Card style={styles.metricCard}>
             <HardwareIcon kind="led" color={ledOn ? colors.primary : colors.mutedForeground} />
             <Text style={[styles.metricValue, { color: colors.foreground }]}>
-              {ledOn ? 'ON' : 'OFF'}
+              {ledOn ? t('on') : t('off')}
             </Text>
             <Text style={[styles.metricLabel, { color: colors.mutedForeground }]}>
-              Visibility LED
+              {t('visibilityLed')}
             </Text>
           </Card>
           <Card style={styles.metricCard}>
             <HardwareIcon kind="obs" color={obsConnected ? colors.success : colors.warning} />
             <Text style={[styles.metricValue, { color: colors.foreground }]}>
-              {obsConnected ? 'READY' : 'OFFLINE'}
+              {obsConnected ? 'READY' : t('offline')}
             </Text>
             <Text style={[styles.metricLabel, { color: colors.mutedForeground }]}>
-              OBS Studio
+              {t('obsStudio')}
             </Text>
           </Card>
         </View>
@@ -187,10 +189,10 @@ export default function HomeScreen() {
             </View>
             <View style={styles.voiceText}>
               <Text style={[styles.voiceTitle, { color: colors.foreground }]}>
-                Hands-free control
+                {t('handsFree')}
               </Text>
               <Text style={[styles.voiceSubtitle, { color: colors.mutedForeground }]}>
-                Use your voice while moving
+                {t('useVoice')}
               </Text>
             </View>
           </View>
