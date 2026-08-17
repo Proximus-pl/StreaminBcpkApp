@@ -46,7 +46,7 @@ export default function HomeScreen() {
               {t('fieldControl')}
             </Text>
             <Text style={[styles.title, { color: colors.foreground }]}>
-              {t('goodMorning')}
+              {t('home')}
             </Text>
           </View>
           <IconSquare

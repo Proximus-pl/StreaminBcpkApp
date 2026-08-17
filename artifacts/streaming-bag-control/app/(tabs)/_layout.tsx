@@ -19,7 +19,7 @@ function NativeTabLayout() {
     <NativeTabs>
       <NativeTabs.Trigger name="index">
         <Icon sf={{ default: 'house', selected: 'house.fill' }} />
-        <Label>{t('goodMorning').split(',')[0]}</Label>
+        <Label>{t('home')}</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="controls">
         <Icon sf={{ default: 'slider.horizontal.3', selected: 'slider.horizontal.3' }} />
@@ -79,7 +79,7 @@ function ClassicTabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: t('goodMorning').split(',')[0],
+          title: t('home'),
           tabBarIcon: ({ color }) =>
             isIOS ? (
               <SymbolView name="house" tintColor={color} size={24} />
