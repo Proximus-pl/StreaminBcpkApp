@@ -4,13 +4,24 @@ import React, { createContext, useContext, useEffect, useMemo, useState, type Re
 
 export type CameraView = 'Wide' | 'Front' | 'Rear';
 export type ActivityKind = 'recording' | 'camera' | 'actuator' | 'system' | 'voice';
+export type ActivityEvent =
+  | { type: 'bagPoweredOn' }
+  | { type: 'cameraViewSet'; view: CameraView }
+  | { type: 'actuatorMoved'; direction: 'extended' | 'retracted'; position: number }
+  | { type: 'recordingEnded' }
+  | { type: 'recordingStarted' }
+  | { type: 'recordingStopped'; seconds: number }
+  | { type: 'cameraToggled'; enabled: boolean; view: CameraView }
+  | { type: 'visibilityLedToggled'; enabled: boolean }
+  | { type: 'voiceCommandCompleted' }
+  | { type: 'obsConnected' }
+  | { type: 'obsDisconnected' };
 
 export interface ActivityItem {
   id: string;
-  title: string;
-  detail: string;
   time: string;
   kind: ActivityKind;
+  event: ActivityEvent;
 }
 
 interface BagContextValue {
@@ -35,10 +46,10 @@ interface BagContextValue {
 }
 
 const initialActivity: ActivityItem[] = [
-  { id: '1', title: 'Bag powered on', detail: 'All systems nominal', time: 'Now', kind: 'system' },
-  { id: '2', title: 'Camera view set to Wide', detail: '4K / 30 FPS', time: 'Today, 09:42', kind: 'camera' },
-  { id: '3', title: 'Actuator retracted', detail: 'Position 0%', time: 'Today, 09:40', kind: 'actuator' },
-  { id: '4', title: 'Recording session ended', detail: '18 min 24 sec', time: 'Yesterday, 18:12', kind: 'recording' },
+  { id: '1', event: { type: 'bagPoweredOn' }, time: 'Now', kind: 'system' },
+  { id: '2', event: { type: 'cameraViewSet', view: 'Wide' }, time: 'Today, 09:42', kind: 'camera' },
+  { id: '3', event: { type: 'actuatorMoved', direction: 'retracted', position: 0 }, time: 'Today, 09:40', kind: 'actuator' },
+  { id: '4', event: { type: 'recordingEnded' }, time: 'Yesterday, 18:12', kind: 'recording' },
 ];
 
 const BagContext = createContext<BagContextValue | null>(null);
@@ -90,31 +101,31 @@ export function BagProvider({ children }: { children: ReactNode }) {
     setIsRecording(next);
     if (next) {
       setRecordingSeconds(0);
-      addActivity({ title: 'Recording started', detail: 'OBS Studio is receiving video', kind: 'recording' });
+      addActivity({ event: { type: 'recordingStarted' }, kind: 'recording' });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } else {
-      addActivity({ title: 'Recording stopped', detail: `${recordingSeconds} sec captured`, kind: 'recording' });
+      addActivity({ event: { type: 'recordingStopped', seconds: recordingSeconds }, kind: 'recording' });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     }
   };
 
   const toggleCamera = () => {
     setCameraOn((value) => !value);
-    addActivity({ title: cameraOn ? 'Camera disabled' : 'Camera enabled', detail: `${cameraView} view`, kind: 'camera' });
+    addActivity({ event: { type: 'cameraToggled', enabled: !cameraOn, view: cameraView }, kind: 'camera' });
     Haptics.selectionAsync();
   };
 
   const switchCamera = () => {
     const next: CameraView = cameraView === 'Wide' ? 'Front' : cameraView === 'Front' ? 'Rear' : 'Wide';
     setCameraView(next);
-    addActivity({ title: `Camera view set to ${next}`, detail: '4K / 30 FPS', kind: 'camera' });
+    addActivity({ event: { type: 'cameraViewSet', view: next }, kind: 'camera' });
     Haptics.selectionAsync();
   };
 
   const moveActuator = (delta: number) => {
     setActuatorPosition((position) => {
       const next = Math.max(0, Math.min(100, position + delta));
-      addActivity({ title: delta > 0 ? 'Actuator extended' : 'Actuator retracted', detail: `Position ${next}%`, kind: 'actuator' });
+      addActivity({ event: { type: 'actuatorMoved', direction: delta > 0 ? 'extended' : 'retracted', position: next }, kind: 'actuator' });
       return next;
     });
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -122,7 +133,7 @@ export function BagProvider({ children }: { children: ReactNode }) {
 
   const toggleLed = () => {
     setLedOn((value) => !value);
-    addActivity({ title: ledOn ? 'Visibility LED off' : 'Visibility LED on', detail: ledOn ? 'Manual control' : 'Darkness mode armed', kind: 'system' });
+    addActivity({ event: { type: 'visibilityLedToggled', enabled: !ledOn }, kind: 'system' });
     Haptics.selectionAsync();
   };
 
@@ -134,7 +145,7 @@ export function BagProvider({ children }: { children: ReactNode }) {
       setIsListening(false);
       setLastVoiceCommand('Start recording');
       if (!isRecording) toggleRecording();
-      addActivity({ title: 'Voice command completed', detail: 'Start recording', kind: 'voice' });
+       addActivity({ event: { type: 'voiceCommandCompleted' }, kind: 'voice' });
     }, 1400);
   };
 
@@ -142,8 +153,8 @@ export function BagProvider({ children }: { children: ReactNode }) {
     () => ({
       isRecording, recordingSeconds, cameraOn, cameraView, actuatorPosition, ledOn, isListening, obsConnected,
       lastVoiceCommand, activity, toggleRecording, toggleCamera, switchCamera, moveActuator, toggleLed, startListening,
-      connectObs: () => { setObsConnected(true); addActivity({ title: 'OBS Studio connected', detail: 'Ready to stream', kind: 'system' }); },
-      disconnectObs: () => { setObsConnected(false); addActivity({ title: 'OBS Studio disconnected', detail: 'Local controls still available', kind: 'system' }); },
+      connectObs: () => { setObsConnected(true); addActivity({ event: { type: 'obsConnected' }, kind: 'system' }); },
+      disconnectObs: () => { setObsConnected(false); addActivity({ event: { type: 'obsDisconnected' }, kind: 'system' }); },
     }),
     [isRecording, recordingSeconds, cameraOn, cameraView, actuatorPosition, ledOn, isListening, obsConnected, lastVoiceCommand, activity],
   );
