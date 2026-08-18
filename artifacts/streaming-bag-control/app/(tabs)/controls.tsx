@@ -6,16 +6,18 @@ import { Card, Divider, Eyebrow, HardwareIcon, IconSquare, StatusPill } from '@/
 import { useBag } from '@/context/BagContext';
 import { useColors } from '@/hooks/useColors';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useDrawer } from '@/context/DrawerContext';
 
 export default function ControlsScreen() {
   const colors = useColors();
   const { t } = useLanguage();
+  const { openDrawer } = useDrawer();
   const insets = useSafeAreaInsets();
   const { cameraOn, cameraView, actuatorPosition, ledOn, isListening, lastVoiceCommand, toggleCamera, switchCamera, moveActuator, toggleLed, startListening } = useBag();
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 18, paddingBottom: 110 }]} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}><View><Text style={[styles.kicker, { color: colors.primary }]}>{t('hardware')}</Text><Text style={[styles.title, { color: colors.foreground }]}>{t('bagControls')}</Text></View><IconSquare icon="more-horizontal" onPress={() => undefined} accessibilityLabel={t('moreControls')} /></View>
+        <View style={styles.header}><View><Text style={[styles.kicker, { color: colors.primary }]}>{t('hardware')}</Text><Text style={[styles.title, { color: colors.foreground }]}>{t('bagControls')}</Text></View><IconSquare icon="menu" onPress={openDrawer} accessibilityLabel="Open menu" /></View>
 
         <Card style={styles.controlCard}>
           <View style={styles.controlTop}><View style={styles.controlTitleRow}><View style={[styles.controlIcon, { backgroundColor: colors.accent }]}><HardwareIcon kind="camera" color={colors.accentForeground} /></View><View><Text style={[styles.controlTitle, { color: colors.foreground }]}>{t('cameraSystem')}</Text><Text style={[styles.controlDetail, { color: colors.mutedForeground }]}>{t('primaryCapture')}</Text></View></View><StatusPill label={cameraOn ? t('active') : t('off')} active={cameraOn} /></View>

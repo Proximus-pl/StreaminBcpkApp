@@ -6,6 +6,13 @@ export type LanguageCode = 'en' | 'pl' | 'de' | 'uk';
 const english = {
   fieldControl: 'FIELD CONTROL / 01',
   home: 'Home',
+  navigation: 'NAVIGATION',
+  map: 'Map',
+  logout: 'Log out',
+  drawerHint: 'Swipe from the left edge to open this menu',
+  fieldUnitLocation: 'FIELD UNIT LOCATION',
+  gpsSynced: 'GPS synced · 2 sec ago',
+  mapMockDescription: 'Mock field view for the connected streaming bag.',
   goodMorning: 'Good morning, Alex',
   streamingBag: 'STREAMING BAG',
   unit: 'Unit SB-2048',
@@ -91,7 +98,7 @@ const english = {
 
 export type TranslationKey = keyof typeof english;
 
-const translations: Record<LanguageCode, Record<TranslationKey, string>> = {
+const translations: Record<LanguageCode, Partial<Record<TranslationKey, string>>> = {
   en: english,
   pl: {
     fieldControl: 'STEROWANIE TERENOWE / 01', home: 'Start', goodMorning: 'Dzień dobry, Alex', streamingBag: 'PLECAK STREAMINGOWY', unit: 'Jednostka SB-2048', obsLinked: 'OBS POŁĄCZONY', localMode: 'TRYB LOKALNY', recordingLive: 'Nagrywanie na żywo', readyToRecord: 'Gotowy do nagrywania', liveCapture: 'NAGRYWANIE NA ŻYWO', captureStandby: 'GOTOWY DO NAGRYWANIA', k4: '4K / 30 FPS', glance: 'Podgląd', allControls: 'Wszystkie sterowania', on: 'WŁ.', off: 'WYŁ.', wideCamera: 'Kamera szeroka', frontCamera: 'Kamera przednia', rearCamera: 'Kamera tylna', actuatorPosition: 'Pozycja siłownika', visibilityLed: 'Dioda widoczności', obsStudio: 'OBS Studio', handsFree: 'Sterowanie głosem', useVoice: 'Używaj głosu podczas ruchu', hardware: 'SPRZĘT / 02', bagControls: 'Sterowanie plecakiem', moreControls: 'Więcej ustawień', cameraSystem: 'System kamery', primaryCapture: 'Główny moduł nagrywania', active: 'AKTYWNA', currentView: 'AKTUALNY WIDOK', switchView: 'Zmień widok', cameraSpecs: '4K · 30 FPS · H.264', moveOut: 'Wysuń', moveIn: 'Wsuń', actuatorArm: 'Ramię siłownika', physicalLift: 'Podnośnik kamery', ledDescription: 'Wskazuje, kto nagrywa', darknessAssist: 'Tryb ciemności', darknessDescription: 'Włącza się automatycznie poniżej 20 lx', voiceCommand: 'Polecenie głosowe', listening: 'Słucham…', voiceHint: 'Dotknij, aby wydać polecenie', timeline: 'OŚ CZASU / 03', activity: 'Aktywność', idle: 'BEZCZYNNOŚĆ', live: 'NA ŻYWO', sessionStatus: 'STATUS SESJI', capturingStream: 'Trwa nagrywanie transmisji', readyNextTake: 'Gotowy na kolejne nagranie', everyControl: 'Każda akcja pojawi się tutaj', recentActivity: 'Ostatnia aktywność', noActivity: 'Brak aktywności', noActivityBody: 'Zdarzenia plecaka pojawią się tutaj.', preferences: 'PREFERENCJE / 04', settings: 'Ustawienia', appearance: 'Wygląd', appTheme: 'MOTYW APLIKACJI', system: 'Systemowy', light: 'Jasny', dark: 'Ciemny', language: 'Język', chooseLanguage: 'Wybierz język aplikacji', connections: 'Połączenia', connectedLocal: 'Połączono z lokalną instancją', notConnected: 'Nie połączono', connected: 'POŁĄCZONO', offline: 'OFFLINE', disconnectInstance: 'Odłącz instancję', connectObs: 'Połącz z OBS Studio', about: 'Informacje', appVersion: 'Konsola mobilna · Wersja 0.1.0', manageAccount: 'Zarządzaj dostępem do konta', accountAccess: 'Dostęp do konta', operatorLogin: 'Logowanie operatora', accountLinked: 'Użyj konta połączonego z przestrzenią OBS.', emailAddress: 'Adres e-mail', password: 'Hasło', loginValidation: 'Wpisz e-mail operatora i hasło, aby kontynuować.', continueObs: 'Przejdź do OBS Studio', sampleLogin: 'Użyj przykładowego logowania', sampleCredentials: 'Konto demo · operator@example.com', privacy: 'Dane połączenia pozostają na tym urządzeniu.',
@@ -136,7 +143,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   const value = useMemo(
-    () => ({ language, setLanguage, t: (key: TranslationKey) => translations[language][key] ?? translations.en[key] }),
+    () => ({ language, setLanguage, t: (key: TranslationKey) => translations[language][key] ?? translations.en[key] ?? key }),
     [language],
   );
 

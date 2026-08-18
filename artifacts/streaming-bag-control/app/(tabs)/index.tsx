@@ -8,6 +8,7 @@ import { Card, HardwareIcon, IconSquare, StatusPill } from '@/components/Control
 import { useBag } from '@/context/BagContext';
 import { useColors } from '@/hooks/useColors';
 import { useLanguage } from '@/hooks/useLanguage';
+import { useDrawer } from '@/context/DrawerContext';
 
 function formatDuration(seconds: number) {
   const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -18,6 +19,7 @@ function formatDuration(seconds: number) {
 export default function HomeScreen() {
   const colors = useColors();
   const { t } = useLanguage();
+  const { openDrawer } = useDrawer();
   const insets = useSafeAreaInsets();
   const {
     isRecording,
@@ -49,11 +51,7 @@ export default function HomeScreen() {
               {t('home')}
             </Text>
           </View>
-          <IconSquare
-            icon="settings"
-            onPress={() => router.push('/settings')}
-            accessibilityLabel="Open settings"
-          />
+          <IconSquare icon="menu" onPress={openDrawer} accessibilityLabel="Open menu" />
         </View>
 
         <LinearGradient

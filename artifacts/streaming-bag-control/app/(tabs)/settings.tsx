@@ -8,12 +8,14 @@ import { useBag } from '@/context/BagContext';
 import { useColors } from '@/hooks/useColors';
 import { useTheme, type ThemeMode } from '@/hooks/useTheme';
 import { languageOptions, useLanguage } from '@/hooks/useLanguage';
+import { useDrawer } from '@/context/DrawerContext';
 
 export default function SettingsScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const { mode, setMode } = useTheme();
   const { language, setLanguage, t } = useLanguage();
+  const { openDrawer } = useDrawer();
   const { obsConnected, connectObs, disconnectObs } = useBag();
   const themeOptions: { key: ThemeMode; label: string; icon: keyof typeof Feather.glyphMap }[] = [
     { key: 'system', label: 'System', icon: 'smartphone' },
@@ -23,7 +25,7 @@ export default function SettingsScreen() {
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={[styles.content, { paddingTop: insets.top + 18, paddingBottom: 110 }]} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}><View><Text style={[styles.kicker, { color: colors.primary }]}>{t('preferences')}</Text><Text style={[styles.title, { color: colors.foreground }]}>{t('settings')}</Text></View><View style={[styles.avatar, { backgroundColor: colors.primary }]}><Text style={[styles.avatarText, { color: colors.primaryForeground }]}>A</Text></View></View>
+        <View style={styles.header}><View><Text style={[styles.kicker, { color: colors.primary }]}>{t('preferences')}</Text><Text style={[styles.title, { color: colors.foreground }]}>{t('settings')}</Text></View><View style={styles.headerActions}><View style={[styles.avatar, { backgroundColor: colors.primary }]}><Text style={[styles.avatarText, { color: colors.primaryForeground }]}>A</Text></View><Pressable testID="settings-menu" accessibilityRole="button" accessibilityLabel="Open menu" onPress={openDrawer} style={({ pressed }) => [styles.menuButton, { backgroundColor: colors.secondary }, pressed && styles.pressed]}><Feather name="menu" size={18} color={colors.foreground} /></Pressable></View></View>
         <Card style={styles.profile}><View style={[styles.profileAvatar, { backgroundColor: colors.deep }]}><Text style={[styles.profileInitial, { color: colors.primary }]}>A</Text></View><View style={styles.profileCopy}><Text style={[styles.profileName, { color: colors.foreground }]}>Alex Morgan</Text><Text style={[styles.profileEmail, { color: colors.mutedForeground }]}>field operator · SB-2048</Text></View><Feather name="edit-3" size={17} color={colors.mutedForeground} /></Card>
         <Text style={[styles.sectionTitle, { color: colors.foreground }]}>{t('appearance')}</Text>
         <Card style={styles.themeCard}><Text style={[styles.cardLabel, { color: colors.mutedForeground }]}>{t('appTheme')}</Text><View style={styles.themeOptions}>{themeOptions.map((option) => <Pressable key={option.key} testID={`theme-${option.key}`} accessibilityRole="button" accessibilityLabel={`Use ${option.label} theme`} onPress={() => setMode(option.key)} style={({ pressed }) => [styles.themeOption, { backgroundColor: mode === option.key ? colors.accent : colors.secondary, borderColor: mode === option.key ? colors.primary : 'transparent' }, pressed && styles.pressed]}><Feather name={option.icon} size={17} color={mode === option.key ? colors.accentForeground : colors.mutedForeground} /><Text style={[styles.themeLabel, { color: mode === option.key ? colors.accentForeground : colors.mutedForeground }]}>{t(option.key)}</Text>{mode === option.key && <View style={[styles.selectedDot, { backgroundColor: colors.primary }]} />}</Pressable>)}</View></Card>
@@ -46,6 +48,8 @@ const styles = StyleSheet.create({
   title: { fontFamily: 'Inter_700Bold', fontSize: 27, letterSpacing: -0.8 },
   avatar: { alignItems: 'center', borderRadius: 20, height: 40, justifyContent: 'center', width: 40 },
   avatarText: { fontFamily: 'Inter_700Bold', fontSize: 16 },
+  headerActions: { alignItems: 'center', flexDirection: 'row', gap: 9 },
+  menuButton: { alignItems: 'center', borderRadius: 14, height: 40, justifyContent: 'center', width: 40 },
   profile: { alignItems: 'center', flexDirection: 'row', gap: 12 },
   profileAvatar: { alignItems: 'center', borderRadius: 25, height: 50, justifyContent: 'center', width: 50 },
   profileInitial: { fontFamily: 'Inter_700Bold', fontSize: 20 },
