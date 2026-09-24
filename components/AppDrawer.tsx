@@ -15,6 +15,7 @@ import { useBag } from '@/context/BagContext';
 import { useDrawer } from '@/context/DrawerContext';
 import { useColors } from '@/hooks/useColors';
 import { useLanguage } from '@/hooks/useLanguage';
+import { supabase } from '@/utils/supabase'; // <-- 1. Import Supabase
 
 type DrawerRoute = '/(tabs)' | '/(tabs)/controls' | '/(tabs)/activity' | '/map' | '/(tabs)/settings';
 
@@ -50,9 +51,15 @@ export function AppDrawer() {
     router.replace(path);
   };
 
-  const logout = () => {
-    closeDrawer();
-    router.replace('/login');
+  // 2. Make the function async and call Supabase
+  const logout = async () => {
+    closeDrawer(); // Close the drawer visually first
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error logging out:', error.message);
+    }
+    // No router.replace('/login') needed here anymore!
+    // The RootLayout listener handles the redirect perfectly.
   };
 
   const items: { label: string; icon: keyof typeof Feather.glyphMap; path: DrawerRoute }[] = [
