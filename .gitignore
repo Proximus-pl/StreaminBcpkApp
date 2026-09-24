@@ -39,3 +39,11 @@ yarn-error.*
 .vercel
 
 .env
+
+supabase/.env
+supabase/*.secret
+supabase/*.local
+
+# Supabase local state
+supabase/.temp/
+supabase/.local/
